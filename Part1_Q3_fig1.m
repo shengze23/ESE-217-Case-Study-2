@@ -34,7 +34,7 @@ grid on;
 
 figure;
 subplot(2, 1, 1);
-plot(t, V_out);;
+plot(t, V_out);
 xlabel("time(s)");
 ylabel("Out put Voltage");
 grid on;
