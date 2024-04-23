@@ -6,13 +6,13 @@ close all;
 
 S = load("noisyhandel.mat");    % loads data
 
-% setup audio signal and metdata
+%% Setup audio signal source and metadata
 noisy = S.Vsound;
 Fs    = S.Fs;  % 44100
 T     = 1/Fs;
 L     = length(noisy);
 
-%playSound(noisy, Fs);
+playSound(noisy, Fs);
 
 % figure 1: noisyhandle soundwaves
 tspan = 0:T:(L - 1) * T;
@@ -39,28 +39,31 @@ noisyf_map = [noisyf, X_s.'];                   % each amplitude is assigned to 
 noisyf_map = sortrows(noisyf_map, 'descend');   % key-value pairings preserved
 
 % dominant frequencies from fft are: 60 Hz (likely from electrical grid), 44040 Hz
-% design a circuit to isolate the above frequencies ie.
-
+% the above frequencies are 'noisy' so we want to filter them out as much
+% as possible (fft output on these peaks should be far lower after
+% filtering)
+ 
+%% 2nd Order High-pass Circuit (similar config to fig. 3)
 % define circuit constants and initial conditions
-R2 = 16;        % Resistance in Ohms for R2
+R2 = 1.6;       % Resistance in Ohms for R2 -> lower impedence on first circuit (R4 = R2 * 10)
 R4 = 16;        % Resistance in Ohms for R4 **CONST**
-C1 = 1.658e-4;  % Capacitance in Farads for C1
-C3 = 1.658e-4;  % Capacitance in Farads for C3 -> C1 and C3 from cutoff frequency eqn where f_c = 60 Hz (grid freq)
+C1 = 9.947e-5;  % Capacitance in Farads for C1 -> C1 from cutoff frequency eqn: f_c = 100 Hz (sufficiently above 60 Hz grid)
+C3 = 9.947e-6;  % Capacitance in Farads for C3 -> higher impedence on second circuit (C3 = C1 / 10)
 V0 = [0; 0];    % Initial voltages across C1 and C3
 % note: cutoff freq is f_c = 1/(2pi(rc))
 
 % Solve the system of circuit ODEs
 % V(1) = V_1, V(2) = V_C3
-[t, V] = ode45(@(t, V) cascadedRCODE_A(t, noisy, V, R2, R4, C1, C3, round(t / T) + 1), tspan, V0);
+[t1, V] = ode45(@(t, V) cascadedRCODE_A(t, noisy, V, R2, R4, C1, C3, round(t / T) + 1), tspan, V0);
 V_out = V(:,1) - V(:,2);
 
 % figure 3: output voltage
 figure;
-plot(tspan, V_out);
+plot(t1, V_out);
 
 xlabel("Time (s)");
 ylabel("Output Signal Strength (V)");
-grid on
+grid on;
 
 % fourier analysis on output signal to verify captured frequencies
 V_outf = abs(fft(V_out));
@@ -68,12 +71,12 @@ V_outf = abs(fft(V_out));
 % figure 4: v_out fft
 figure;
 hold on;
-xline(44040, '--magenta');  % target freq
 plot(X_s, V_outf);
 hold off;
 
 xlabel("Time (s)");
 ylabel("fft output")
+grid on;
 
 % figure 5: v_out
 figure;
@@ -81,17 +84,24 @@ plot(tspan, V_out);
 
 xlabel("Time (s)");
 ylabel("Signal Strength (V)");
+grid on;
 
 playSound(V_out, Fs);
 
-% Alternate circuit design
+%% Band-pass filter (similar config to fig. 4)
 % Define changed circuit elements
-R1 = 16;
-C2 = 1.658e-4;
+R1 = R2;        % Resistance in Ohms for R1 -> low impedence on first stage (low-pass)
+C2 = 3.094e-5;  % Capacitance in Farads for C2 -> low-pass stage: cutoff freq is 3214.89 Hz*
+C3 = C1;        % Capacitance in Farads for C3 -> high-pass stage: same as above circuit
+
+% * from band-pass centre frequency formula: f = sqrt(f_c_high * f_c_low)
+%   high-pass stage cutoff freq is same as before at 100 Hz
+%   from noisyf_map: most dominant freq that is audible and not 60 Hz (grid)
+%   is 567 Hz so we set that as centre frequency for the above
 
 % Solve the system of circuit ODEs
 % V(1) = V_1, V(2) = V_C3
-[t, V2] = ode45(@(t, V2) cascadedRCODE_B(t, noisy, V2, R1, R4, C2, C3, round(t / T) + 1), tspan, V0);
+[t2, V2] = ode45(@(t, V2) cascadedRCODE_B(t, noisy, V2, R1, R4, C2, C3, round(t / T) + 1), tspan, V0);
 V_out2 = V2(:,1) - V2(:,2);
 
 % Fourier analysis on alternate circuit 
@@ -100,27 +110,36 @@ V_out2f = abs(fft(V_out2));
 % figure 6: v_out2 fft
 figure;
 hold on;
-xline(44040, '--magenta');  % target freq
 plot(X_s, V_out2f);
 hold off;
 
 xlabel("Time (s)");
 ylabel("fft output")
+grid on;
 
 % figure 7: v_out2
 figure;
-plot(tspan, V_out2);
+plot(t2, V_out2);
 
 xlabel("Time (s)");
 ylabel("Signal Strength (V)");
+grid on;
 
 playSound(V_out2, Fs);
 
-% We would prefer the original circuit (modeled by cascadedRCODE_A) since
-% it seems to have a better signal strength, both circuits seem to filter
-% out similar frequencies as shown in their respective ffts so quality is
-% approximately similar.
+%% Results:
+% We would prefer the 2nd order high-pass circuit over the band-pass
+% circuit in this case as though the band-pass circuit is theoretically
+% more versatile in that there is an upper and lower cutoff frequency, the
+% single order setup in this case introduces far more disturbance. As such,
+% even though the 2nd order high-pass circuit does not remove as much of
+% the hiss it does a far better job at removing the 60 Hz hum. In addition,
+% as shown in the fft plots, the majority of the upper frequency
+% disturbances are not audible (with peaks at around 44040 Hz, the upper
+% limit of human hearing is ~ 15-17 kHz) so the fact that high frequency 
+% filtering is absent is far less of an issue.  
 
+%% DEs:
 function dVdt = cascadedRCODE_A(~, Vin, V, R2, R4, C1, C3, counter)
     dV1dt = (Vin(counter) - V(1)) / (R2 * C1);
     dV3dt = (V(1) - V(2)) / (R4 * C3);
