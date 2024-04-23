@@ -47,8 +47,8 @@ noisyf_map = sortrows(noisyf_map, 'descend');   % key-value pairings preserved
 % define circuit constants and initial conditions
 R2 = 1.6;       % Resistance in Ohms for R2 -> lower impedence on first circuit (R4 = R2 * 10)
 R4 = 16;        % Resistance in Ohms for R4 **CONST**
-C1 = 9.947e-5;  % Capacitance in Farads for C1 -> C1 from cutoff frequency eqn: f_c = 100 Hz (sufficiently above 60 Hz grid)
-C3 = 9.947e-6;  % Capacitance in Farads for C3 -> higher impedence on second circuit (C3 = C1 / 10)
+C1 = 8.289e-5;  % Capacitance in Farads for C1 -> C1 from cutoff frequency eqn: f_c = 120 Hz (sufficiently above 60 Hz grid)
+C3 = 8.289e-6;  % Capacitance in Farads for C3 -> higher impedence on second circuit (C3 = C1 / 10)
 V0 = [0; 0];    % Initial voltages across C1 and C3
 % note: cutoff freq is f_c = 1/(2pi(rc))
 
@@ -137,7 +137,7 @@ playSound(V_out2, Fs);
 % as shown in the fft plots, the majority of the upper frequency
 % disturbances are not audible (with peaks at around 44040 Hz, the upper
 % limit of human hearing is ~ 15-17 kHz) so the fact that high frequency 
-% filtering is absent is far less of an issue.  
+% filtering is absent is less of an issue.  
 
 %% DEs:
 function dVdt = cascadedRCODE_A(~, Vin, V, R2, R4, C1, C3, counter)
