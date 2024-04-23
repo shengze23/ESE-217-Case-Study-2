@@ -1,4 +1,4 @@
-clear all;
+clear;
 close all;
 % Constants and initial conditions
 R1 = 1000; % Resistance in Ohms for R2

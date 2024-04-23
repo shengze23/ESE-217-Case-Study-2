@@ -1,4 +1,4 @@
-clear all;
+clear;
 close all;
 
 % Constants and initial conditions
