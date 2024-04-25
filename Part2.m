@@ -12,7 +12,7 @@ Fs    = S.Fs;  % 44100
 T     = 1/Fs;
 L     = length(noisy);
 
-playSound(noisy, Fs);
+%playSound(noisy, Fs);
 
 % figure 1: noisyhandle soundwaves
 tspan = 0:T:(L - 1) * T;
@@ -66,7 +66,7 @@ hold on;
 plot(X_s, V_outf);
 hold off;
 
-xlabel("Time (s)");
+xlabel("Frequency (Hz)");
 ylabel("fft output")
 grid on;
 
@@ -78,7 +78,7 @@ xlabel("Time (s)");
 ylabel("Signal Strength (V)");
 grid on;
 
-playSound(V_out, Fs);
+%playSound(V_out, Fs);
 
 %% Band-pass filter (similar config to fig. 4)
 % Define changed circuit elements
@@ -104,7 +104,7 @@ hold on;
 plot(X_s, V_out2f);
 hold off;
 
-xlabel("Time (s)");
+xlabel("Frequency (Hz)");
 ylabel("fft output")
 grid on;
 
@@ -116,7 +116,7 @@ xlabel("Time (s)");
 ylabel("Signal Strength (V)");
 grid on;
 
-playSound(V_out2, Fs);
+%playSound(V_out2, Fs);
 
 %% Band-pass filter (similar config to fig. 4) but with 2nd Order High-Pass Input
 % This circuit is equivalent to cascading a 2nd order high-pass filter
@@ -138,7 +138,7 @@ hold on;
 plot(X_s, V_out3f);
 hold off;
 
-xlabel("Time (s)");
+xlabel("Frequency (Hz)");
 ylabel("fft output")
 grid on;
 
@@ -150,22 +150,25 @@ xlabel("Time (s)");
 ylabel("Signal Strength (V)");
 grid on;
 
-playSound(V_out3, Fs);
+%playSound(V_out3, Fs);
 
 
 %% Results:
-% We would prefer the 2nd order high-pass circuit over the band-pass
-% circuit in this case as though the band-pass circuit is theoretically
-% more versatile in that there is an upper and lower cutoff frequency, the
-% single order setup in this case likely does a worse job at filtering out 
-% unwanted frequencies. Furthermore, while both circuits do a good job at
-% filtering out the 60 Hz hum, the high-pass circuit actually does a better
-% job at filtering out the hissing. This could suggest that the hiss is
-% made up of a significant amount of lower frequency elements not covered
-% by the low-pass portion of the band-pass filter, thus diminishing the
-% usefulness of the band-pass filter's extra functionality. Finally, we
-% also experimented on running the 2nd order high-pass circuit's output
-% through the first order band-pass circuit. Though this method seems to
+% Though the band-pass circuit is theoretically more versatile in that there
+% is an upper and lower cutoff frequency, the single order setup in this case 
+% likely does a worse job at filtering out unwanted frequencies. Furthermore, 
+% while both circuits do a good job at filtering out the 60 Hz hum, the 
+% high-pass circuit actually does a better job at filtering out the high 
+% frequency hissing. This could suggest that the hiss is made up of a 
+% significant amount of lower frequency elements not covered by the low-pass
+% portion of the band-pass filter, thus diminishing the usefulness of the 
+% band-pass filter's extra functionality. That being said, though the
+% hissing sound is more intense in the band-pass filter, the sound of the
+% actual music also has much more clarity possibly owing to the band-pass
+% filter removing excess upper frequency noise.
+% 
+% Finally, we also experimented on running the 2nd order high-pass circuit's 
+% output through the first order band-pass circuit. Though this method seems to
 % have gotten rid of the hissing present in the other two circuit's
 % outputs, the signal making up the music is also heavily diminished and is
 % quite hard to make out as its signal is now quite close in strength to
