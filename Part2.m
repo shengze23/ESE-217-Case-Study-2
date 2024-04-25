@@ -57,18 +57,10 @@ V0 = [0; 0];    % Initial voltages across C1 and C3
 [t1, V] = ode45(@(t, V) cascadedRCODE_A(t, noisy, V, R2, R4, C1, C3, round(t / T) + 1), tspan, V0);
 V_out = V(:,1) - V(:,2);
 
-% figure 3: output voltage
-figure;
-plot(t1, V_out);
-
-xlabel("Time (s)");
-ylabel("Output Signal Strength (V)");
-grid on;
-
 % fourier analysis on output signal to verify captured frequencies
 V_outf = abs(fft(V_out));
 
-% figure 4: v_out fft
+% figure 3: v_out fft
 figure;
 hold on;
 plot(X_s, V_outf);
@@ -78,7 +70,7 @@ xlabel("Time (s)");
 ylabel("fft output")
 grid on;
 
-% figure 5: v_out
+% figure 4: v_out
 figure;
 plot(tspan, V_out);
 
@@ -106,7 +98,7 @@ V_out2 = V2(:,1) - V2(:,2);
 % Fourier analysis on alternate circuit 
 V_out2f = abs(fft(V_out2));
 
-% figure 6: v_out2 fft
+% figure 5: v_out2 fft
 figure;
 hold on;
 plot(X_s, V_out2f);
@@ -116,7 +108,7 @@ xlabel("Time (s)");
 ylabel("fft output")
 grid on;
 
-% figure 7: v_out2
+% figure 6: v_out2
 figure;
 plot(t2, V_out2);
 
@@ -140,7 +132,7 @@ V_out3 = V3(:,1) - V3(:,2);
 % Fourier analysis   
 V_out3f = abs(fft(V_out3));
 
-% figure 8: v_out3 fft
+% figure 7: v_out3 fft
 figure;
 hold on;
 plot(X_s, V_out3f);
@@ -150,7 +142,7 @@ xlabel("Time (s)");
 ylabel("fft output")
 grid on;
 
-% figure 9: v_out3
+% figure 8: v_out3
 figure;
 plot(t3, V_out3);
 
