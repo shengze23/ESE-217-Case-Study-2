@@ -23,7 +23,7 @@ xlabel("time")
 ylabel("V_out")
 grid on;
 subplot(2, 1, 2);
-plot(X_s,abs(Y));
+plot(X_s(1:L/2),abs(Y(1:L/2)));
 xlabel("f (Hz)")
 ylabel("Amplitude for Voltage at frequancy 50")
 grid on;
@@ -44,7 +44,7 @@ xlabel("time(s)");
 ylabel("Out put Voltage");
 grid on;
 subplot(2, 1, 2);
-plot(X_s, abs(Y));
+plot(X_s(1:L/2), abs(Y(1:L/2)));
 xlabel("f (Hz)")
 ylabel("Amplitude for Voltage at frequancy 1000")
 grid on;
