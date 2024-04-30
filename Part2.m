@@ -81,7 +81,7 @@ xlabel("Time (s)");
 ylabel("Signal Strength (V)");
 grid on;
 
-playSound(V_out, Fs);
+%playSound(V_out, Fs);
 
 %% Band-pass filter (similar config to fig. 4)
 % Define changed circuit elements
@@ -120,7 +120,7 @@ xlabel("Time (s)");
 ylabel("Signal Strength (V)");
 grid on;
 
-playSound(V_out2, Fs);
+%playSound(V_out2, Fs);
 
 %% Band-Pass Filter with High-Pass Filter input
 
@@ -152,7 +152,7 @@ xlabel("Time (s)");
 ylabel("Signal Strength (V)");
 grid on;
 
-playSound(V_out3, Fs);
+%playSound(V_out3, Fs);
 
 %% Results:
 % The high-pass filter does a much better job at filtering out the 60 Hz
